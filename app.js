@@ -1,4 +1,4 @@
-"use strict";
+"use strict"; 
 
 process.title = "Bulk Solana Wallet Generator by Corvus Codex";
 
@@ -12,8 +12,6 @@ process.title = "Bulk Solana Wallet Generator by Corvus Codex";
 //Buy me a coffee: https://www.buymeacoffee.com/CorvusCodex
 
 // Importing required modules
-const CoinKey = require('coinkey');
-const crypto = require('crypto');
 const fs = require('fs');
 const readline = require('readline');
 const { Keypair } = require('@solana/web3.js');
@@ -24,6 +22,12 @@ const rl = readline.createInterface({
     output: process.stdout
 });
 let wallets = [];
+
+// Function to convert byte array to hex
+const convertPrivateKeyToHex = (privateKeyArray) => {
+    return Buffer.from(privateKeyArray).toString('hex');
+};
+
 // Prompting the user for the number of wallets to generate
 rl.question("How many wallets do you want to generate? ", (numWallets) => {
     console.log(`User entered: ${numWallets}`);
@@ -31,23 +35,25 @@ rl.question("How many wallets do you want to generate? ", (numWallets) => {
     // Parsing the user input as an integer
     numWallets = parseInt(numWallets);
 
-
     // Generating the specified number of wallets
     for (let i = 0; i < numWallets; i++) {
         console.log(`Generating wallet ${i + 1} of ${numWallets}`);
 
         // Generating a new random Solana keypair
-    const keypair = Keypair.generate();
+        const keypair = Keypair.generate();
   
-    // Getting the private key as a byte array
-    const privateKey = keypair.secretKey;
+        // Getting the private key as a byte array
+        const privateKey = keypair.secretKey;
   
-    // Getting the public key as a base58 encoded string (i.e. the wallet address)
-    const publicKey = keypair.publicKey.toString();
+        // Getting the public key as a base58 encoded string (i.e. the wallet address)
+        const publicKey = keypair.publicKey.toString();
+  
+        // Convert the private key from byte array to hex format
+        const privateKeyHex = convertPrivateKeyToHex(privateKey);
 
         // Adding the generated wallet to the array
         wallets.push({
-            private_key: privateKey.toString('hex'),
+            private_key: privateKeyHex,
             public_address: publicKey
         });
     }
