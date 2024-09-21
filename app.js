@@ -2,15 +2,6 @@
 
 process.title = "Bulk Solana Wallet Generator by Corvus Codex";
 
-//Created by: Corvus Codex
-//Github: https://github.com/CorvusCodex/
-//Licence : MIT License
-
-//Support my work:
-//BTC: bc1q7wth254atug2p4v9j3krk9kauc0ehys2u8tgg3
-//ETH & BNB: 0x68B6D33Ad1A3e0aFaDA60d6ADf8594601BE492F0
-//Buy me a coffee: https://www.buymeacoffee.com/CorvusCodex
-
 // Importing required modules
 const fs = require('fs');
 const readline = require('readline');
@@ -26,6 +17,13 @@ let wallets = [];
 // Function to convert byte array to hex
 const convertPrivateKeyToHex = (privateKeyArray) => {
     return Buffer.from(privateKeyArray).toString('hex');
+};
+
+// Function to generate CSV content
+const convertToCSV = (wallets) => {
+    const header = "Public Address,Private Key\n";
+    const rows = wallets.map(wallet => `${wallet.public_address},${wallet.private_key}`).join('\n');
+    return header + rows;
 };
 
 // Prompting the user for the number of wallets to generate
@@ -61,9 +59,12 @@ rl.question("How many wallets do you want to generate? ", (numWallets) => {
     console.log(`Generated ${numWallets} wallets`);
 
     try {
-        // Saving the generated wallets to a file using fs.writeFileSync
-        fs.writeFileSync('./generated.txt', JSON.stringify(wallets, null, 4));
-        console.log(`Saved generated wallets to generated.txt`);
+        // Convert the wallets array to CSV format
+        const csvContent = convertToCSV(wallets);
+
+        // Saving the generated wallets to a CSV file using fs.writeFileSync
+        fs.writeFileSync('./generated.csv', csvContent);
+        console.log(`Saved generated wallets to generated.csv`);
     } catch (err) {
         console.error(`An error occurred while writing to the file: ${err.message}`);
     }
